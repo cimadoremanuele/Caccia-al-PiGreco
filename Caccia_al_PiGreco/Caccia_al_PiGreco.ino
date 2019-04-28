@@ -1,11 +1,10 @@
 #include <LiquidCrystal_I2C.h>
 
 String simbolo;
-String simbolo2;
-int a; //attribuisco il valore 0 o 1 o 2 a questa variabile con un random, per decidere se metto bonus, malus oppure niente
+int a; //attribuisco un valore da 0 a 6 a questa variabile con un random, per decidere se metto bonus, malus oppure niente
 int posizione;
-int posizione2;
 int tempo;
+int tempo2;
 int vite;
 int punti;
 int record;
@@ -19,7 +18,12 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   // put your setup code here, to run once:
-  simbolo = π;
+  btn1 = 1;
+  btn2 = 2;
+  btn3 = 3;
+  btn4 = 4;
+  btn5 = 5;
+  simbolo = "";
   lcd.init();
   lcd.backlight();
   pinMode(btnStart, INPUT);
@@ -34,45 +38,36 @@ void loop() {
   // put your main code here, to run repeatedly:
   if (digitalRead(btnStart) == HIGH)
   {
-    tempo = random(1000, 3000);
+    tempo = 1500;
     delay(tempo);
     int Array[] = {2, 5, 8, 11, 14};
     posizione = random(0, 4);
     posizione = Array[posizione];
     lcd.setCursor(1, posizione);
-    lcd.print(simbolo)
-    int c = 0;
-    int Array2[4];
-    for (int i = 0; i < 5; i++)
-    {
-      if (posizione != Array[i])
-      {
-        Array2[c] = Array[i];
-        c++;
-      }
-      else
-      {
-        
-      }
-    }
-    a = random(0,2);
+    a = random(0,6);
     if (a == 0)
     {
-      //no simbolo extra
+      simbolo = m; //malus
+      lcd.print(simbolo);
     }
     else if (a == 1)
     {
-      simbolo2 = b; //bonus
-      posizione2 = random(Array2);
-      lcd.setCursor(1, posizione2);
-      lcd.print(simbolo2);
+      simbolo = b; //bonus
+      lcd.print(simbolo);
     }
     else
     {
-      simbolo2 = m; //malus
-      posizione2 = random(Array2);
-      lcd.setCursor(1, posizione2);
-      lcd.print(simbolo2);
+      simbolo = π; //piGreco
+      lcd.print(simbolo);
+    }
+    tempo2 = 1500;
+    int var = 0;
+    while (var < tempo2)
+    {
+      if (a == 0)
+      {
+        
+      }
     }
   }
 }
