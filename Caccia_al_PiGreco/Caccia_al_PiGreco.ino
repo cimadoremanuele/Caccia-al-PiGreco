@@ -23,6 +23,7 @@ void setup() {
   btn3 = 3;
   btn4 = 4;
   btn5 = 5;
+  tempo2 = 1500;
   simbolo = "";
   lcd.init();
   lcd.backlight();
@@ -42,32 +43,45 @@ void loop() {
     delay(tempo);
     int Array[] = {2, 5, 8, 11, 14};
     posizione = random(0, 4);
-    posizione = Array[posizione];
-    lcd.setCursor(1, posizione);
+    lcd.setCursor(1, Array[posizione]);
     a = random(0,6);
     if (a == 0)
     {
-      simbolo = m; //malus
+      //simbolo = m; //malus
       lcd.print(simbolo);
     }
     else if (a == 1)
     {
-      simbolo = b; //bonus
+      //simbolo = b; //bonus
       lcd.print(simbolo);
     }
     else
     {
-      simbolo = π; //piGreco
+      //simbolo = π; //piGreco
       lcd.print(simbolo);
     }
-    tempo2 = 1500;
     int var = 0;
     while (var < tempo2)
     {
       if (a == 0)
       {
-        
+        ControllaBottoni();
       }
+      else if ()
+    }
+  }
+}
+void ControllaBottoni()
+{
+  int b = 1;
+  while (b < 6)
+  {
+    String s = "btn" + b;
+    int btn = s.toInt();
+    if (digitalRead(btn) == HIGH)
+    {
+      vite--;
+      tempo2 = tempo2 - 30;
     }
   }
 }
