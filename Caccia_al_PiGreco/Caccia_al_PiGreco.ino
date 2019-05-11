@@ -4,10 +4,11 @@ String simbolo;
 int a; //attribuisco un valore da 0 a 6 a questa variabile con un random, per decidere se metto bonus, malus oppure niente
 int posizione;
 int tempo;
-int tempo2;
 int vite;
 int punti;
 int record;
+int var;
+int btnRecord;
 int btnStart;
 int btn1;
 int btn2;
@@ -18,12 +19,12 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   // put your setup code here, to run once:
+  var = 0;
   btn1 = 1;
   btn2 = 2;
   btn3 = 3;
   btn4 = 4;
   btn5 = 5;
-  tempo2 = 1500;
   simbolo = "";
   lcd.init();
   lcd.backlight();
@@ -36,52 +37,78 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  if (digitalRead(btnStart) == HIGH)
+  // put your main code here, to run repeatedly:  
+  tempo = 1500;
+  while (vite < 0)
   {
-    tempo = 1500;
-    delay(tempo);
-    int Array[] = {2, 5, 8, 11, 14};
-    posizione = random(0, 4);
-    lcd.setCursor(1, Array[posizione]);
-    a = random(0,6);
-    if (a == 0)
+    if (digitalRead(btnStart) == HIGH)
     {
-      //simbolo = m; //malus
-      lcd.print(simbolo);
-    }
-    else if (a == 1)
-    {
-      //simbolo = b; //bonus
-      lcd.print(simbolo);
-    }
-    else
-    {
-      //simbolo = π; //piGreco
-      lcd.print(simbolo);
-    }
-    int var = 0;
-    while (var < tempo2)
-    {
+      delay(1500);
+      int Array[] = {2, 5, 8, 11, 14};
+      posizione = random(0, 4);
+      lcd.setCursor(1, Array[posizione]);
+      a = random(0,6);
       if (a == 0)
       {
-        ControllaBottoni();
+        simbolo = "m"; //malus
+        lcd.print(simbolo);
       }
-      else if ()
+      else if (a == 1)
+      {
+        simbolo = "b"; //bonus
+        lcd.print(simbolo);
+      }
+      else
+      {
+        simbolo = "π"; //piGreco
+        lcd.print(simbolo);
+      }
+      while (var < tempo)
+      {
+        int b = 0;
+        if (a == 0)
+        {
+          while (b < 5)
+          {
+            ControllaBottoni(vite--, punti--, tempo - 30, b);
+            b++;
+          }
+        }
+        else if (a == 1)
+        {
+          b = posizione;
+          ControllaBottoni(vite++, punti, tempo + 30, b);
+        }
+        else
+        {
+          b = posizione;
+          ControllaBottoni(vite, punti++, tempo + 30, b);
+        }
+        var += 1;
+      }
     }
   }
-}
-void ControllaBottoni()
-{
-  int b = 1;
-  while (b < 6)
+  if (punti > record)
   {
-    String s = "btn" + b;
-    int btn = s.toInt();
-    if (digitalRead(btn) == HIGH)
-    {
-      vite--;
-      tempo2 = tempo2 - 30;
-    }
+    record = punti;
+  }
+}
+void PrimaRiga(int vita, int Punti)
+{
+  lcd.setCursor(0,0);
+  lcd.print("Vite=" + vita);
+  lcd.setCursor(0,9);
+  lcd.print("Punti="+ Punti);
+}
+void ControllaBottoni(int vita, int Punti, int Tempo, int b)
+{
+  String s = "btn" + b;
+  int btn = s.toInt();
+  if (digitalRead(btn) == HIGH)
+  {
+    Punti;
+    vita;
+    Tempo;
+    var = tempo;
   }
 }
