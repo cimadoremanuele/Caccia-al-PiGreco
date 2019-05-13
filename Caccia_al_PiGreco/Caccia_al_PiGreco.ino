@@ -20,9 +20,6 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   // put your setup code here, to run once:
-  var = 0;
-  vite = 5;
-  punti = 0;
   btnStart = 5;
   btnRecord = 6;
   btn1 = 9;
@@ -35,7 +32,8 @@ void setup() {
   simbolo = "";
   lcd.init();
   lcd.backlight();
-  //pinMode(btnStart, INPUT);
+  pinMode(btnRecord, INPUT);
+  pinMode(btnStart, INPUT);
   pinMode(btn1, INPUT);
   pinMode(btn2, INPUT);
   pinMode(btn3, INPUT);
@@ -45,20 +43,11 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  lcd.setCursor(0, 0);
-  lcd.print("Premi il bottone");
-  lcd.setCursor(0, 1);
-  lcd.print("blu per iniziare");
-  vite = 5;
-  punti = 0;
-  tempo = 1500;
+  Inizio();
+  Azzera();
   if (digitalRead(btnRecord) == HIGH)
   {
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print("Record : " + String(record));
-    delay(4000);
-    loop();
+    Record();
   }
   if (digitalRead(btnStart) == HIGH)
   {
@@ -66,113 +55,131 @@ void loop() {
     PrimaRiga(vite, punti);
     while (vite > 0)
     {
-      corretto = false;
-      delay(1500);
-      int Array[] = {2, 5, 8, 11, 14};
-      posizione = random(0, 5);
-      lcd.setCursor(Array[posizione], 1);
-      a = random(0, 10);
-      if (a == 0)
-      {
-        simbolo = "m"; //malus
-        lcd.print(simbolo);
-      }
-      else if (a == 1)
-      {
-        simbolo = "b"; //bonus
-        lcd.print(simbolo);
-      }
-      else
-      {
-        simbolo = "π"; //piGreco
-        lcd.print(simbolo);
-      }
       var = 0;
-      if (a == 0)
+      corretto = false;
+      SceltaPosizione();
+      if (a == 7)
       {
-        while (var < tempo)
-        {
-          if (BottoniErrati(0) == true)
-          {
-            vite--;
-            tempo = tempo - 30;
-            var = tempo;
-          }
-          delay(1);
-          var++;
-        }
-        delay(1);
-        PrimaRiga(vite, punti);
+        malus();
       }
-      else if (a == 1)
+      else if (a == 6)
       {
-        while (var < tempo)
-        {
-          int btn = posizione + 9;
-          if (digitalRead(btn) == HIGH)
-          {
-            vite++;
-            tempo = tempo + 30;
-            var = tempo;
-          }
-          else if (BottoniErrati(posizione) == true)
-          {
-            vite--;
-            var = tempo;
-            tempo = tempo - 30;
-          }
-          else
-          {
-            var += 1;
-          }
-          delay(1);
-        }
-        PrimaRiga(vite, punti);
+        bonus();
       }
       else
       {
-        while (var < tempo)
-        {
-          if (digitalRead(posizione + 9) == HIGH)
-          {
-            punti++;
-            tempo = tempo - 30;
-            var = tempo;
-            corretto = true;
-          }
-          else if (BottoniErrati(posizione) == true)
-          {
-            var = tempo;
-            tempo = tempo - 30;
-          }
-          else
-          {
-            var += 1;
-          }
-          delay(1);
-        }
-        if (corretto == false)
-        {
-          vite--;
-          tempo = tempo - 30;
-        }
-        PrimaRiga(vite, punti);
+        piGreco();
       }
-      lcd.clear();
-      PrimaRiga(vite, punti);
     }
-    if (vite == 0)
-    {
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Game Over");
-      delay(3000);
-    }
-    if (punti > record)
-    {
-      record = punti;
-    }
+    PartitaFinita();
   }
+  if (punti > record)
+  {
+    record = punti;
+  }
+}
+void Inizio()
+{
+  lcd.setCursor(0, 0);
+  lcd.print("Premi il bottone");
+  lcd.setCursor(0, 1);
+  lcd.print("blu per iniziare");
+}
+void Record()
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Record : " + String(record));
+  delay(4000);
+  loop();
+}
+void SceltaPosizione()
+{
+  delay(1500);
+  int Array[] = {2, 5, 8, 11, 14};
+  posizione = random(0, 5);
+  lcd.setCursor(Array[posizione], 1);
+  a = random(0, 10);
+}
+void malus()
+{
+  simbolo = "m"; //malus
+  lcd.print(simbolo);
+  while (var < tempo)
+  {
+    if (BottoniErrati(0) == true)
+    {
+      vite--;
+      tempo = tempo - 30;
+      break;
+    }
+    var++;
+    delay(1);
+  }
+  lcd.clear();
+  PrimaRiga(vite, punti);
+}
+void bonus()
+{
+  simbolo = "b"; //bonus
+  lcd.print(simbolo);
+  while (var < tempo)
+  {
+    int btn = posizione + 9;
+    if (digitalRead(btn) == HIGH)
+    {
+      vite++;
+      tempo = tempo + 30;
+      break;
+    }
+    else if (BottoniErrati(posizione + 9) == true)
+    {
+      vite--;
+      tempo = tempo - 30;
+      break;
+    }
+    var++;
+    delay(1);
+  }
+  lcd.clear();
+  PrimaRiga(vite, punti);
+}
+void piGreco()
+{
+  simbolo = "π"; //piGreco
+  lcd.print(simbolo);
+  while (var < tempo)
+  {
+    if (digitalRead(posizione + 9) == HIGH)
+    {
+      punti++;
+      tempo = tempo - 30;
+      corretto = true;
+      break;
+    }
+    else if (BottoniErrati(posizione + 9) == true)
+    {
+      corretto = false;
+      tempo = tempo - 30;
+      break;
+    }
+    var++;
+    delay(1);
+  }
+  if (corretto == false)
+  {
+    vite--;
+    tempo = tempo - 30;
+  }
+  lcd.clear();
+  PrimaRiga(vite, punti);
+}
+void Azzera()
+{
+  vite = 5;
+  punti = 0;
+  var = 0;
+  tempo = 1500;
 }
 bool BottoniErrati(int a)
 {
@@ -195,4 +202,11 @@ void PrimaRiga(int vita, int Punti)
   lcd.print("Vite=" + String(vita));
   lcd.setCursor(8, 0);
   lcd.print("Punti=" + String(Punti));
+}
+void PartitaFinita()
+{
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Game Over");
+  delay(3000);
 }
